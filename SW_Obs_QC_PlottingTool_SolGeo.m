@@ -1,16 +1,29 @@
-function [h,Tr_bar,Tr_std,bincount] = SW_Obs_QC_PlottingTool_SolGeo(DATstr,SWFLAG)
+function [h,Tr_bar,Tr_std,bincount] = SW_Obs_QC_PlottingTool_SolGeo(DATstr,SWFLAG,FIGFLAG,varargin)
 % Graphs downwelling shortwave accoring to azimuth and solar zenith angle.
 % Used to identify visually/subjectively potentially shaded solar geometery
 % configurations.
 %
 % SYNTAX:
-%	h = SW_Obs_QC_PlottingTool_SolGeo(DATstr,SWFLAG)
+%	[h,Tr_bar,Tr_std,bincount] = SW_Obs_QC_PlottingTool_SolGeo(DATstr,SWFLAG)
+%	[h,Tr_bar,Tr_std,bincount] = SW_Obs_QC_PlottingTool_SolGeo(DATstr,SWFLAG,FIGFLAG)
 %
 % INPUTS:
-%
+%	DATstr 	= 1x1 matlab structure: Contains the following fields
+%			EL 		= Nx1 vector - Elevation angle
+%			AZ 		= Nx1 vector - Azimuth angle
+%			SWdwn 	= Nx1 vector - Downwelling shortwave [Wm-2]
+%	SWFLAG 	= Nx7 matrix of QC flags (from SW_Obs_QC_v2.m)
+%	FIGFLAG = Optional input, produce figures of binned mean and std tranmissivity?
+%				1 = Yes, please, figured
+%				0 = No (default)
 %
 % OUTPUTS:
-%
+%	h 		= 2x1 vector of figure handles. Returns NaNs if FIGFLAG = 0
+%	Tr_bar 	= JxK matrix of mean transmissivity for each angular bin in the
+%				space defined by the solar zenith and azimuth angles 
+%	Tr_std 	= JxK matrix of transmissivity standard deviation for each angular
+%				bin in the space defined by the solar zenith and azimuth angles
+%	bincount= JxK matrix, number of time steps within given angular bin
 
 %%%%%%%%%%%%
 %% CHECKS %%
@@ -36,24 +49,18 @@ if isfield(DATstr,'AZ')
 else
 	error('No azimuth angle was found (fieldname AZ)')
 end
-if isfield(DATstr,'SOLDIST')
-	SOLDIST = DATstr.SOLDIST;
-else
-	error('No normalized Earth-Sun distance was found (fieldname SOLDIST)')
-end
-if isfield(DATstr,'HA')
-	HA = DATstr.HA;
-else
-	error('No solar hour angle was found (fieldname HA)')
-end
 if size(SWFLAG,2) > 1
 	% If SWFLAG a matrix, collapse down to a good, no good index
 	SWFLAG = sum(SWFLAG,2);
 end
 
 % Check for consistency
-if length(SWdwn) ~= length(EL) || length(SWdwn) ~= length(AZ) || length(SWdwn) ~= length(SOLDIST) || length(SWdwn) ~= length(HA) || length(SWdwn) ~= length(SWFLAG)
+if length(SWdwn) ~= length(EL) || length(SWdwn) ~= length(AZ) || length(SWdwn) ~= length(SWFLAG)
 	error('All data vectors must be the same length')
+end
+
+if nargin == 2
+	FIGFLAG = 1;
 end
 
 %%%%%%%%%%%
@@ -76,47 +83,46 @@ ind = find(EL > 0 & SWFLAG == 0 & ~isnan(SWdwn) & Tr > 0 & Tr < 1);	% Only plot 
 [i,j] = find(~isnan(Tr_bar));
 ind = find(~isnan(Tr_bar));
 
-% Plot mean vs solar geo
-h(1) = figure;										% Handle to figure
-scatter(AZplot(j),90-ELplot(i),20,Tr_bar(ind),'filled')
+% Figures of binned tranmissivity
+if FIGFLAG
+	% Plot mean vs solar geo
+	h(1) = figure;										% Handle to figure
+	scatter(AZplot(j),90-ELplot(i),20,Tr_bar(ind),'filled')
 
-% Formating
-CLim = [0 1];
-set(gca,'CLim',CLim)
-COL = colorbar;
-cmap = cbrewer('seq','Reds',11);
-cmap = cmap(2:end,:);
-colormap(cmap)
-set(gca,'YDir','reverse')
-grid on
-xlabel('Azimuth')
-ylabel('SZA')
-ylabel(COL,'Transmissivity')
-axis([0 355 5 90])
-SetFigureProperties([1.5,1],gcf)
+	% Formating
+	CLim = [0 1];
+	set(gca,'CLim',CLim)
+	COL = colorbar;
+	cmap = cbrewer('seq','Reds',11);
+	cmap = cmap(2:end,:);
+	colormap(cmap)
+	set(gca,'YDir','reverse')
+	grid on
+	xlabel('Azimuth')
+	ylabel('SZA')
+	ylabel(COL,'Transmissivity')
+	axis([0 355 5 90])
+	SetFigureProperties([1.5,1],gcf)
 
-% Plot standard deviation vs solar geo
-h(2) = figure;										% Handle to figure
-scatter(AZplot(j),90-ELplot(i),20,Tr_std(ind),'filled')
+	% Plot standard deviation vs solar geo
+	h(2) = figure;										% Handle to figure
+	scatter(AZplot(j),90-ELplot(i),20,Tr_std(ind),'filled')
 
-% Formating
-CLim = [0 .3];
-set(gca,'CLim',CLim)
-COL = colorbar;
-cmap = cbrewer('seq','Reds',7);
-cmap = cmap(2:end,:);
-colormap(cmap)
-set(gca,'YDir','reverse')
-grid on
-xlabel('Azimuth')
-ylabel('SZA')
-ylabel(COL,'\sigma Transmissivity')
-axis([0 355 5 90])
-SetFigureProperties([1.5,1],gcf)
+	% Formating
+	CLim = [0 .3];
+	set(gca,'CLim',CLim)
+	COL = colorbar;
+	cmap = cbrewer('seq','Reds',7);
+	cmap = cmap(2:end,:);
+	colormap(cmap)
+	set(gca,'YDir','reverse')
+	grid on
+	xlabel('Azimuth')
+	ylabel('SZA')
+	ylabel(COL,'\sigma Transmissivity')
+	axis([0 355 5 90])
+	SetFigureProperties([1.5,1],gcf)
+else
+	h = NaN(2,1);
+end
 
-% Old version of scatter plot -- very very slow and cumbersome
-% scatter(AZ(ind),90-EL(ind),25,SWdwn(ind)./TOA,'filled')% Scatter plot of transmissivity vs solar geometry
-% To plot in polar
-% scatter((1-sind(EL(ind))).*sind(AZ(ind)),(1-sind(EL(ind))).*cosd(AZ(ind)),5,SWdwn(ind)./TOA,'filled')
-% Old attempt at making a better figure for printing
-% hm = mesh(AZplot,90-ELplot,Tr_bar,'mesh','column');
