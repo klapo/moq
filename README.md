@@ -14,3 +14,5 @@ Matlab scripts for running the quality control methods developed explicitly for 
 ## 
 NOTE: Plotting of transmissivity requires colorbrewer functions
 (http://www.mathworks.com/matlabcentral/fileexchange/34087-cbrewer---colorbrewer-schemes-for-matlab)
+
+Functions make calls to my time handling scripts (github.com/klapo/time_tools)
