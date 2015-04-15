@@ -164,12 +164,9 @@ PNind = SWdwn > 10 & (mew == 0);			% check for night time
 SWFLAG(PNind,2) = 1;
 PMind = SWdwn > S .* 1.5 .* mew.^1.2 + 100;	% physical max global SW (hard maximum)
 SWFLAG(PMind,4) = 1;					
-
 % Defunct (Climate dependent max global SW) - regularly fails in winter at high elevaiton sites
 CMind = SWdwn > S .* C1 .* mew.^1.2 + 50;	% climate dependent max global SW (soft maximum)
 SWFLAG(CMind,3) = 1;
-
-
 % Sub-Rayleigh scattering - THIS FIELD NEEDS TO BE CHANGED
 SRind = SWdwn./TOA < 1/100 & EL > 15;
 SWFLAG(SRind,5) = 1;						% Unphysically low values for higher solar elevation angles
@@ -190,43 +187,6 @@ SWFLAG = logical(SWFLAG);						% Convert all flags to logical value (1 = did not
 % General QC pass for handing to shading function
 SWFLAG(:,7) = ~logical(sum(SWFLAG,2));			% QC logical (1 = passed all, 0 = failed test(s))
 [shadeflag,h] = MOQ_Shade_Detect(DATstr,FIG_FLAG);
-
-%% Build Figures
-if FIG_FLAG
-	% Points that passed shading - mean transmissivity 
-	h(3) = figure;
-	scatter(AZplot(ind_AZ),90-ELplot(ind_EL),20,Tr_bar(ind),'filled')
-	CLim = [0 1];
-	set(gca,'CLim',CLim)
-	COL = colorbar;
-	cmap = cbrewer('seq','Reds',11);
-	cmap = cmap(2:end,:);
-	colormap(cmap)
-	set(gca,'YDir','reverse')
-	grid on
-	xlabel('Azimuth')
-	ylabel('SZA')
-	ylabel(COL,'Transmissivity')
-	axis([0 355 5 90])
-
-	% Points that passed shading - standard deviation of transmissivity 
-	h(4) = figure;
-	scatter(AZplot(ind_AZ),90-ELplot(ind_EL),20,Tr_std(ind),'filled')
-	CLim = [0 .3];
-	set(gca,'CLim',CLim)
-	COL = colorbar;
-	cmap = cbrewer('seq','Reds',7);
-	cmap = cmap(2:end,:);
-	colormap(cmap)
-	set(gca,'YDir','reverse')
-	grid on
-	xlabel('Azimuth')
-	ylabel('SZA')
-	ylabel(COL,'\sigma Transmissivity')
-	axis([0 355 5 90])
-else
-	h(3) = NaN; h(4) = NaN;
-end
 
 %% General QC pass - Finalize for output 
 SWFLAG = [SWFLAG(1:6),shadeflag];				% Cat all QC tests
