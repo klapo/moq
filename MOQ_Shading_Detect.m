@@ -1,4 +1,4 @@
-function DATstr = MOQ_Shade_Detect(DATstr)
+function [shadeflag,h] = MOQ_Shade_Detect(DATstr,FIG_FLAG,varargin)
 % PURPOSE: 
 % Finds shaded time steps using mean and standard deviation of transmissivity
 % for angular bins of solar angles. Assumes that shaded times behave
@@ -14,12 +14,14 @@ function DATstr = MOQ_Shade_Detect(DATstr)
 %           AZ      = Nx1 vector - Azimuth angle
 %           SWdwn   = Nx1 vector - Downwelling shortwave [Wm-2]
 %   		SWFLAG  = Nx7 matrix of QC flags (from SW_Obs_QC_v2.m)
+%	FIG_FLAG = 1x1 logical, create figures (0 = default)
 %
 % OUTPUTS:
-%	DATstr.SWFLAG	= Nx8 vector - QC flags for passing QC. Adds column for shading:
-% 			Column 8 - Shading
+%	shadeflag	= Nx1 vector - QC Flag for shading to be added to QC matrix
 %				1 = shaded
 %				0 = not-shaded
+%	h 		= 2x1 scalar, handles to plots of mean and standard deviation of
+%			transmissivity. Returns NaN if FIG_FLAG is 0.
 
 %%%%%%%%%%%%
 %% CHECKS %%
@@ -56,6 +58,10 @@ if length(SWdwn) ~= length(EL) || length(SWdwn) ~= length(AZ) || length(SWdwn) ~
     error('All data vectors must be the same length')
 end
 
+if nargin == 1
+	FIG_FLAG = 0;
+end
+
 %%%%%%%%%%
 %% CODE %%
 %%%%%%%%%%
@@ -73,7 +79,12 @@ else
 
 %% Bin transmissivity
 % SWQCFLAG - general pass fail
-[~,Tr_bar,Tr_std,bincount] = SW_Obs_QC_PlottingTool_SolGeo(DATstr.(s{n}),~DATstr.(s{n}).SWQCFLAG(:,7),0);
+if FIG_FLAG
+	[h,Tr_bar,Tr_std,bincount] = SW_Obs_QC_PlottingTool_SolGeo(DATstr.(s{n}),~DATstr.(s{n}).SWQCFLAG(:,7),0);
+else
+	[~,Tr_bar,Tr_std,bincount] = SW_Obs_QC_PlottingTool_SolGeo(DATstr.(s{n}),~DATstr.(s{n}).SWQCFLAG(:,7),0);
+	h(1) = NaN; h(2) = NaN;
+end
 
 %% 2D space search
 % Find points in time series within discrete solar geometry grid.
@@ -103,4 +114,41 @@ end
 % Times not classified as exposed (not a member of exposed index)
 % 0 = not classified as shaded, 1 = classified as shaded
 exc_ind = ~ismember(1:length(DATstr.(s{n}).AZ),ind_exp)' & DATstr.(s{n}).EL > 0;
-DATstr.(s{n}).SWQCFLAG = [DATstr.(s{n}).SWQCFLAG,logical(exc_ind)];
+shadeflag = logical(exc_ind);
+
+%% Build Figures 
+if FIG_FLAG
+    % Points that passed shading - mean transmissivity 
+    h(3) = figure;
+    scatter(AZplot(ind_AZ),90-ELplot(ind_EL),20,Tr_bar(ind),'filled')
+    CLim = [0 1];
+    set(gca,'CLim',CLim)
+    COL = colorbar;
+    cmap = cbrewer('seq','Reds',11);
+    cmap = cmap(2:end,:);
+    colormap(cmap)
+    set(gca,'YDir','reverse')
+    grid on
+    xlabel('Azimuth')
+    ylabel('SZA')
+    ylabel(COL,'Transmissivity')
+    axis([0 355 5 90])
+
+    % Points that passed shading - standard deviation of transmissivity 
+    h(4) = figure;
+    scatter(AZplot(ind_AZ),90-ELplot(ind_EL),20,Tr_std(ind),'filled')
+    CLim = [0 .3];
+    set(gca,'CLim',CLim)
+    COL = colorbar;
+    cmap = cbrewer('seq','Reds',7);
+    cmap = cmap(2:end,:);
+    colormap(cmap)
+    set(gca,'YDir','reverse')
+    grid on
+    xlabel('Azimuth')
+    ylabel('SZA')
+    ylabel(COL,'\sigma Transmissivity')
+    axis([0 355 5 90])
+else
+    h(3) = NaN; h(4) = NaN; 
+end
