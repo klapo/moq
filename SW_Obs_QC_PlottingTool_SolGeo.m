@@ -51,7 +51,7 @@ else
 end
 if size(SWFLAG,2) > 1
 	% If SWFLAG a matrix, collapse down to a good, no good index
-	SWFLAG = sum(SWFLAG,2);
+	SWFLAG = logical(sum(SWFLAG,2));
 end
 
 % Check for consistency

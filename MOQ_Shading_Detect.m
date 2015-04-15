@@ -68,21 +68,23 @@ end
 
 %% Search zenith and azimuth angular space for shading
 % Only applicable if we have more than 3 years of data
-obs_len = length(DATstr.(s{n}).SWdwn);
-dt = Get_dt(DATstr.(s{n}).t);
+obs_len = length(SWdwn);
+dt = Get_dt(t);
 dt_per_year = 365/dt;
 num_years = obs_len/dt_per_year;
 if num_years < 3
-	disp('Function requires 3 years of observations. Exiting...')
+	disp('Shade detection requires 3 years of observations. Skipping...')
+	h = NaN(4,1);
+	shadeflag = zeros(length(SWFLAG),1);
 	return
 else
 
 %% Bin transmissivity
 % SWQCFLAG - general pass fail
 if FIG_FLAG
-	[h,Tr_bar,Tr_std,bincount] = SW_Obs_QC_PlottingTool_SolGeo(DATstr.(s{n}),~DATstr.(s{n}).SWQCFLAG(:,7),0);
+	[h,Tr_bar,Tr_std,bincount] = SW_Obs_QC_PlottingTool_SolGeo(DATstr,DATstr.SWFLAG(:,7),FIG_FLAG);
 else
-	[~,Tr_bar,Tr_std,bincount] = SW_Obs_QC_PlottingTool_SolGeo(DATstr.(s{n}),~DATstr.(s{n}).SWQCFLAG(:,7),0);
+	[~,Tr_bar,Tr_std,bincount] = SW_Obs_QC_PlottingTool_SolGeo(DATstr,DATstr.SWFLAG(:,7),0);
 	h(1) = NaN; h(2) = NaN;
 end
 
@@ -97,23 +99,23 @@ ind = find(Tr_bar > .4 | Tr_std > .15);             % Linear index (reshaped to 
 ind_exp = [];                                       % Pre-allocate
 
 % Limit the 2D search space to only observed values
-ELmax = round(max(DATstr.(s{n}).EL)./dEL).*dEL;
+ELmax = round(max(EL)./dEL).*dEL;
 ELmin = 0;
-AZmax = round(max(DATstr.(s{n}).AZ)./dAZ).*dAZ;
-AZmin = round(min(DATstr.(s{n}).AZ)./dAZ).*dAZ;
+AZmax = round(max(AZ)./dAZ).*dAZ;
+AZmin = round(min(AZ)./dAZ).*dAZ;
 
 % Discretized solar geometry space
 for k = 1:length(ind_EL)
-	temp = find(DATstr.(s{n}).AZ > AZplot(ind_AZ(k)) - dAZ/2 ...
-		& DATstr.(s{n}).AZ <= AZplot(ind_AZ(k)) + dAZ/2 ...
-		& DATstr.(s{n}).EL > ELplot(ind_EL(k)) - dEL/2 ... 
-		& DATstr.(s{n}).EL <= ELplot(ind_EL(k))+ dEL/2);
+	temp = find(AZ > AZplot(ind_AZ(k)) - dAZ/2 ...
+		& AZ <= AZplot(ind_AZ(k)) + dAZ/2 ...
+		& EL > ELplot(ind_EL(k)) - dEL/2 ... 
+		& EL <= ELplot(ind_EL(k))+ dEL/2);
 	ind_exp = [ind_exp; temp];
 end
 
 % Times not classified as exposed (not a member of exposed index)
 % 0 = not classified as shaded, 1 = classified as shaded
-exc_ind = ~ismember(1:length(DATstr.(s{n}).AZ),ind_exp)' & DATstr.(s{n}).EL > 0;
+exc_ind = ~ismember(1:length(AZ),ind_exp)' & EL > 0;
 shadeflag = logical(exc_ind);
 
 %% Build Figures 

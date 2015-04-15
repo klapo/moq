@@ -185,7 +185,7 @@ SWFLAG = logical(SWFLAG);						% Convert all flags to logical value (1 = did not
 
 %% Shading
 % General QC pass for handing to shading function
-SWFLAG(:,7) = ~logical(sum(SWFLAG,2));			% QC logical (1 = passed all, 0 = failed test(s))
+SWFLAG(:,7) = logical(sum(SWFLAG,2));			% QC logical (0 = passed all, 1 = failed test(s))
 [shadeflag,h] = MOQ_Shade_Detect(DATstr,FIG_FLAG);
 
 %% General QC pass - Finalize for output 
