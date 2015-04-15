@@ -67,7 +67,7 @@ end
 dt_s = Get_dt(t);								% Time step in serial format
 dlen = length(SWdwn);
 SF = zeros(size(SWdwn));
-[~,S] = RvsS(T,P,1);							% Determine snow amounts
+[~,S] = RvsS(T,P,1);							% Determine amount of frozen precip
 
 % Adjustable parameters 
 cumPcrit = PARAMS.cumPcrit;						% Critical accumulated precip amount in interval (mm) 
