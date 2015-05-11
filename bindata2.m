@@ -16,7 +16,7 @@ function [ym,ys,yn] = bindata2(y,x1,x2,x1rg,x2rg)
 % subplot(1,2,2);h = imagesc(xrg,xrg,ym);
 % set(h,'AlphaData',~isnan(ym)); box off;
 %
-%By Patrick Mineault
+%Based on function written by Patrick Mineault
 %Refs: http://xcorr.net/?p=3326
 %      http://www-pord.ucsd.edu/~matlab/bin.htm
 [~,whichedge1] = histc(x1,x1rg(:)');
