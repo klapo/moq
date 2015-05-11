@@ -1,5 +1,5 @@
 function [SF] = MOQ_SOD_Detect(DATstr,PARAMS)
-% Stand alone SOD module from SW_Obs_QC.m Originally intended for testing parameter values.
+% SOD module from SW_Obs_QC_v2.m
 %
 % SYNTAX:
 %	SF = MOQ_SOD_Detect(DATstr)
@@ -9,16 +9,12 @@ function [SF] = MOQ_SOD_Detect(DATstr,PARAMS)
 %		t		= Nx7 matrix, time_builder formatted dates
 %		SWdwn	= Nx1 vector, downwelling irradiance (Wm^-2)
 %		T		= Nx1 vector, air temperature (C)
-%		P		= Nx1 vector, precipitation during the time step (mm)
+%		P		= Nx1 vector, precipitation during the time step (mm/hr)
 %		WIND	= Nx1 vector, average wind speed (m/s)
-%	PARAMS 	= parameter values for SD algorithm
+%	PARAMS 	= 1x1 structure 	- Parameter values for SD algorithm
 %
 % OUTPUTS:
 %	SF		= Nx1 vector, QC flags
-
-%% TO DO: %%
-% [ ] Include discussion of model limitations using in line comments
-% [ ] Make reference to those comments in paper
 
 %%%%%%%%%%%%
 %% CHECKS %%
