@@ -77,7 +77,7 @@ if num_years < 3
 	h = NaN(4,1);
 	shadeflag = zeros(length(SWFLAG),1);
 	return
-else
+end
 
 %% Bin transmissivity
 % SWQCFLAG - general pass fail
