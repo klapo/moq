@@ -6,7 +6,7 @@ function [shadeflag,h] = MOQ_Shade_Detect(DATstr,FIG_FLAG,varargin)
 % locations)
 %
 % SYNTAX:
-% 	SHADE_IND = MOQ_Shade_Detect(DATstr,SWFLAG,FIGFLAG,varargin)
+% 	SHADE_IND = MOQ_Shade_Detect(DATstr,FIGFLAG,varargin)
 %
 % INPUTS:
 %   DATstr  = 1x1 matlab structure: Contains the following fields
@@ -77,7 +77,7 @@ if num_years < 3
 	h = NaN(4,1);
 	shadeflag = zeros(length(SWFLAG),1);
 	return
-else
+end
 
 %% Bin transmissivity
 % SWQCFLAG - general pass fail
