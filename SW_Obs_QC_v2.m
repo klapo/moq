@@ -16,8 +16,8 @@ function [SWFLAG,h] = SW_Obs_QC_v2(DATstr,FIG_FLAG,inverse_flag,varargin)
 %	Added stand alone functiosn for detecting shading and snow burial
 % 
 % SYNTAX:
-%	FLAGS = SW_Obs_QC(DATstr)
-%	FLAGS = SW_Obs_QC(DATstr,FIG_FLAG)
+%	FLAGS = SW_Obs_QC_v2(DATstr)
+%	FLAGS = SW_Obs_QC_v2(DATstr,FIG_FLAG)
 %
 % INPUTS:e
 %	DATstr	= 1x1 structure 	- Contains fields with observations for QC
