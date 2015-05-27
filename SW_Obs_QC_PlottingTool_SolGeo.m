@@ -102,7 +102,6 @@ if FIGFLAG
 	ylabel('SZA')
 	ylabel(COL,'Transmissivity')
 	axis([0 355 5 90])
-	SetFigureProperties([1.5,1],gcf)
 
 	% Plot standard deviation vs solar geo
 	h(2) = figure;										% Handle to figure
@@ -121,7 +120,6 @@ if FIGFLAG
 	ylabel('SZA')
 	ylabel(COL,'\sigma Transmissivity')
 	axis([0 355 5 90])
-	SetFigureProperties([1.5,1],gcf)
 else
 	h = NaN(2,1);
 end
