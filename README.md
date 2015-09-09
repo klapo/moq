@@ -1,5 +1,5 @@
 # moq
-Mountain Observation Quality Control
+## Mountain Observation Quality Control
 
 Matlab scripts for running the quality control methods developed explicitly for mountain observations of irradiances. Specifically targets:
 
