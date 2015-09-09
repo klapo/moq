@@ -17,4 +17,4 @@
 1. Plotting transmissivity requires [colorbrewer](http://www.mathworks.com/matlabcentral/fileexchange/34087-cbrewer---colorbrewer-schemes-for-matlab)
 functions
 
-2. Assumes times/dates are in [time_builder](github.com/klapo/time_tools) format
+2. Assumes times/dates are in [time_builder](http://www.github.com/klapo/time_tools) format
