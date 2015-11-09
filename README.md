@@ -4,7 +4,7 @@
 
 #####Specifically targets:
 
-1. Burial of sensors by snow (MOQ_SOD_Detect.m, used in SW_OBS_QC_v2.m and SnowOnDome_StandAlone.m, stand alone version of function)
+1. [Burial of sensors by snow](http://onlinelibrary.wiley.com/doi/10.1002/2015WR017590/full) (MOQ_SOD_Detect.m, used in SW_OBS_QC_v2.m and SnowOnDome_StandAlone.m, stand alone version of function)
 2. Shading (SW_Obs_QC_PlottingTool_SolGeo.m)
 
 #####Additionally:
