@@ -50,7 +50,7 @@ end
 if isfield(DATstr,'SWFLAG')
     SWFLAG = DATstr.SWFLAG;
 else
-    error('No azimuth angle was found (fieldname AZ)')
+    error('No azimuth angle was found (fieldname SWFLAG)')
 end
 
 % Check for consistency
