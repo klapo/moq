@@ -92,6 +92,10 @@ else
 	error('No air temperature was found (fieldname T)')
 end
 if isfield(DATstr,'P')
+    if nanmax(DATstr.P) < 1
+        DATstr.P = DATstr.P * 1000;
+        disp('Detected precipitation in units of meters, converted to mm')
+    end
     P = DATstr.P;
 else
 	error('No precipitation was found (fieldname P)')
